@@ -203,8 +203,8 @@ include_directories(
 # catkin_add_nosetests(test)
 
 
-#add_executable(forward_1meter src/forward_1m.cpp)
-#target_link_libraries(forward_1meter ${catkin_LIBRARIES})
+add_executable(forward_1meter src/forward_1m.cpp)
+target_link_libraries(forward_1meter ${catkin_LIBRARIES})
 
 add_executable(base_controller src/base_controller.cpp)
 target_link_libraries(base_controller ${catkin_LIBRARIES})

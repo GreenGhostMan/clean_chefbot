@@ -74,10 +74,10 @@ void loop() {
   if (time_t - lastMilli >= 100)   { 
     cmdMessenger.feedinSerialData();
     
-    long delta_t = time_t - lastMilli;
-    float delta_t_sec = delta_t / 1000.0;
+    long delta_t = time_t - lastMilli;    
     getMotorData(delta_t);
-
+    float delta_t_sec = delta_t / 1000.0;   
+     
     right_pwm = updatePid(1, right_pwm, desire_rpm_right, actual_rpm_right,delta_t_sec);
     left_pwm = updatePid(2, left_pwm, desire_rpm_left, actual_rpm_left,delta_t_sec);
 

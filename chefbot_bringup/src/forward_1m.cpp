@@ -10,13 +10,13 @@ int main(int argc,char** argv)
 		goal_dist = atoll(argv[2]);
 	}
 	else{
-		ROS_INFO("Usage: rosrun chefbot forward_1m <linear.x> <goal_distance>");
+		ROS_INFO("Usage: rosrun chefbot_bringup forward_1m <linear.x> <goal_distance>");
 		linear_vel = 0.2;
 		goal_dist = 1.0;
 	}
 	ros::init(argc,argv, "forward" );
 	ros::NodeHandle nh;
-	ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("cmd_navigation",100);
+	ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("cmd_vel",100);
 
 	int rate = 10;
 
