@@ -2,7 +2,7 @@
 	<arg name="laser_scan" value="true"/>
 	<arg name="gmapping" value="true"/>
 	<arg name="amcl" value="true"/>
-	<arg name="rviz" value="true"/>
+	<arg name="rviz" value="false"/>
 
 	<node name="twistToMotors" pkg="chefbot_bringup" type="twist_to_motors" />
 
