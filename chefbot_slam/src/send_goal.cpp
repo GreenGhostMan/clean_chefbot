@@ -27,37 +27,76 @@ int main(int argc,char** argv)
 {
 	ros::init(argc,argv,"nav_test");
 	ros::NodeHandle n;
+	if(argc != 5){
+		ROS_INFO("rosrun chefbot_slam send_goal x y x_ex y_ex");
+		return -1;
+	}
+	float goal_x = atoll(argv[1]);
+	float goal_y = atoll(argv[2]);
+	float x_ex  = atoll(argv[3]);
+	float y_ex  = atoll(argv[4]);
 
-	geometry_msgs::Quaternion quaternions[4];
-	double euler_angles[4]={0,0,0,0};
+	geometry_msgs::Quaternion quaternions[3];
+	double euler_angles[3]={0,3.1415/2.0,0};
 
-	for(int i=0;i<4;i++)
+	for(int i=0;i<3;i++)
 	{
 		quaternions[i]=createQuaternionFromRPY(0,0,euler_angles[i]);
 	}
 
-	geometry_msgs::Pose waypoints;
+	geometry_msgs::Pose waypoints[3];
 
-	waypoints.position.x=1.0;
-	waypoints.position.y=0.0;
-	waypoints.position.z=0.0;
-	waypoints.orientation.x=quaternions[0].x;
-	waypoints.orientation.y=quaternions[0].y;
-	waypoints.orientation.z=quaternions[0].z;
-	waypoints.orientation.w=quaternions[0].w;
+	waypoints[0].position.x= goal_x + x_ex;
+	waypoints[0].position.y= -goal_y + y_ex;//left goal_y - y_ex;
+	waypoints[0].position.z= 0.0;
+	waypoints[0].orientation.x= quaternions[0].x;
+	waypoints[0].orientation.y= quaternions[0].y;
+	waypoints[0].orientation.z= quaternions[0].z;
+	waypoints[0].orientation.w= quaternions[0].w;
+
+
+	waypoints[1].position.x= goal_x;
+	waypoints[1].position.y= -goal_y; // left +
+	waypoints[1].position.z= 0.0;
+	waypoints[1].orientation.x= quaternions[1].x;
+	waypoints[1].orientation.y= quaternions[1].y;
+	waypoints[1].orientation.z= quaternions[1].z;
+	waypoints[1].orientation.w= quaternions[1].w;
+
+	waypoints[2].position.x= goal_x;
+	waypoints[2].position.y= -goal_y;  // left
+	waypoints[2].position.z= 0.0;
+	waypoints[2].orientation.x= quaternions[2].x;
+	waypoints[2].orientation.y= quaternions[2].y;
+	waypoints[2].orientation.z= quaternions[2].z;
+	waypoints[2].orientation.w= quaternions[2].w;
 
 	move_base move_base("move_base",true);
 	move_base.waitForServer(ros::Duration(60));
 
-	//geometry_msgs::Pose waypoints[4];
+	move_base_msgs::MoveBaseGoal goal;
+	goal.target_pose.header.frame_id="map";
+		
 
-		move_base_msgs::MoveBaseGoal goal;
-		goal.target_pose.header.frame_id="map";
-		goal.target_pose.header.stamp=ros::Time::now();
-		goal.target_pose.pose=waypoints;
-		move_base.sendGoal(goal);
+		for (int i=0;i<3;i++)
+		{
+			goal.target_pose.header.stamp=ros::Time::now();
+			goal.target_pose.pose=waypoints[i];
+			move_base.sendGoal(goal);
+
+			bool status=move_base.waitForResult(ros::Duration(60
+));
+			if(status){
+				ROS_INFO_STREAM("waypoints "<< i << "..parking");
+			}
+			else{
+				move_base.cancelGoal();
+				ROS_INFO("FAIL");
+			}
+		}
 
 	ros::spin();
+	ros::shutdown();
 	}
 
 static geometry_msgs::Quaternion createQuaternionFromRPY(double roll, double pitch, double yaw) 
